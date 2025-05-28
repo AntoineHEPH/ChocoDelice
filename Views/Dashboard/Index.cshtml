@@ -1,0 +1,63 @@
+@model Condorcet.B2.AspnetCore.MVC.Application.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1 class="mb-4">Dashboard</h1>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <h5 class="card-title">Utilisateurs inscrits</h5>
+                <p class="card-text display-4">@Model.UserCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <h5 class="card-title">Produits disponibles</h5>
+                <p class="card-text display-4">@Model.ProductCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <h5 class="card-title">Commande(s) simulée(s)</h5>
+                <p class="card-text display-4">@Model.OrderCount</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Derniers utilisateurs</h5>
+                <ul class="list-group list-group-flush">
+                    @foreach(var user in Model.RecentUsers)
+                    {
+                        <li class="list-group-item">@user.Username (@user.CreatedAt.ToString("g"))</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Derniers produits ajoutés</h5>
+                <ul class="list-group list-group-flush">
+                    @foreach(var prod in Model.RecentProducts)
+                    {
+                        <li class="list-group-item">@prod.Name (@prod.CreatedAt.ToString("g"))</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

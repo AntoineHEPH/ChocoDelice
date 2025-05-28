@@ -1,0 +1,61 @@
+﻿@using Condorcet.B2.AspnetCore.MVC.Application.Core.Domain
+@using Condorcet.B2.AspnetCore.MVC.Application.Models
+@model List<CommandeViewModel>
+
+@{
+    ViewData["Title"] = "Historique des commandes";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4"><i class="bi bi-clipboard-data"></i> Historique complet des commandes</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            <i class="bi bi-inbox"></i> Aucune commande trouvée.
+        </div>
+    }
+    else
+    {
+        @foreach (var commande in Model)
+        {
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <strong>Client :</strong> @commande.Username &nbsp; | &nbsp;
+                    <strong>Date :</strong> @commande.OrderDate.ToString("g")
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Produit</th>
+                                <th>Quantité</th>
+                                <th>Prix unitaire</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in commande.Produits)
+                            {
+                                <tr>
+                                    <td>@item.ProductName</td>
+                                    <td>@item.Quantity</td>
+                                    <td>@(item.UnitPrice.ToString("C"))</td>
+                                    <td>@((item.Quantity * item.UnitPrice).ToString("C"))</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-end fw-bold">Total commande :</td>
+                                <td class="fw-bold">
+                                    @commande.Produits.Sum(p => p.Quantity * p.UnitPrice).ToString("C")
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+</div>

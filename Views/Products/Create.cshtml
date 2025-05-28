@@ -1,0 +1,16 @@
+@model ProductFormViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Product</h4>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <partial name="_ProductForm" model="Model" />
+        <input type="submit" value="Create" class="btn btn-primary"/>
+    </div>
+</form>

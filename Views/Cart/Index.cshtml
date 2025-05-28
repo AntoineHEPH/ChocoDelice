@@ -1,0 +1,82 @@
+@model CartIndexViewModel
+@using System.Linq
+
+@{
+    ViewData["Title"] = "Mon Panier";
+    decimal total = Model.Products.Sum(item => item.Product.Prix * item.Quantity);
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4"><i class="bi bi-basket-fill"></i> Mon Panier</h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success text-center">
+            <i class="bi bi-check-circle-fill"></i> @TempData["Success"]
+        </div>
+    }
+
+    @if (!Model.Products.Any())
+    {
+        <div class="alert alert-info text-center">
+            <i class="bi bi-emoji-frown"></i> Votre panier est vide.
+        </div>
+    }
+    else
+    {
+        <table class="table table-hover shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>Produit</th>
+                    <th>Prix unitaire</th>
+                    <th>Quantité</th>
+                    <th>Total</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Products)
+                {
+                    var qtxPrix = item.Product.Prix * item.Quantity;
+                    <tr>
+                        <td class="align-middle">@item.Product.Name</td>
+                        <td class="align-middle">@item.Product.Prix.ToString("C0")</td>
+                        <td class="align-middle">
+                            <form asp-action="UpdateQuantity" method="post" class="d-flex">
+                                <input type="hidden" name="productId" value="@item.Product.Id" />
+                                <input type="number" name="quantity" value="@item.Quantity" min="0" class="form-control me-2" style="width: 80px;" />
+                                <button type="submit" class="btn btn-outline-success btn-sm" title="Mettre à jour">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                            </form>
+                        </td>
+                        <td class="align-middle">@qtxPrix.ToString("C0") €</td>
+                        <td class="align-middle text-center">
+                            <form asp-action="Remove" method="post">
+                                <input type="hidden" name="productId" value="@item.Product.Id" />
+                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Supprimer">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>                                                                           
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-end"><strong>Total :</strong></td>
+                    <td colspan="2" class="text-start"><strong>@total.ToString("C0") €</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        
+       <form asp-controller="Order" asp-action="Create" method="post">
+    <button type="submit" class="btn btn-success">
+        <i class="bi bi-check2-circle"></i> Valider la commandeeeeeeeee
+    </button>
+</form>
+
+
+    }
+</div>

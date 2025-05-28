@@ -1,0 +1,45 @@
+﻿@using Condorcet.B2.AspnetCore.MVC.Application.Core.Domain
+@model List<Order>
+
+@{
+    ViewData["Title"] = "Toutes les Commandes";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4"><i class="bi bi-card-list"></i> Toutes les Commandes Clients</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning text-center">
+            Aucune commande trouvée.
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped table-hover shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>Client</th>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Prix unitaire</th>
+                    <th>Total</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.Username</td>
+                        <td>@order.ProductName</td>
+                        <td>@order.Quantity</td>
+                        <td>@order.UnitPrice.ToString("C")</td>
+                        <td>@order.Total.ToString("C")</td>
+                        <td>@order.OrderDate.ToString("g")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
