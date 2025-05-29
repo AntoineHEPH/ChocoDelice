@@ -14,15 +14,17 @@ public class DapperCartRepository : ICartRepository
             _dbConnectionProvider = dbConnectionProvider;
         }
 
+        //Requête de ChatGPT pour calculer le total par la suite
         public async Task<List<CartItem>> GetAll(int userId)
         {
             using var connection = await _dbConnectionProvider.CreateConnection();
-            var sql = @"
-                SELECT ci.user_id, ci.product_id, ci.quantity,
-                       p.id, p.name, p.description, p.type, p.prix, p.isactive
-                FROM cart_items ci
-                JOIN products p ON p.id = ci.product_id
-                WHERE ci.user_id = @userId AND p.isactive = true";
+            var sql = """
+                      SELECT ci.user_id, ci.product_id, ci.quantity,
+                             p.id, p.name, p.description, p.type, p.prix, p.isactive
+                      FROM cart_items ci
+                      JOIN products p ON p.id = ci.product_id
+                      WHERE ci.user_id = @userId AND p.isactive = true
+                      """;
             var result = await connection.QueryAsync<CartItem, Product, CartItem>(
                 sql,
                 (ci, product) =>
@@ -40,11 +42,12 @@ public class DapperCartRepository : ICartRepository
         public async Task Add(int userId, int productId, int quantity)
         {
             using var connection = await _dbConnectionProvider.CreateConnection();
-            var sql = @"
-                INSERT INTO cart_items (user_id, product_id, quantity)
-                VALUES (@userId, @productId, @quantity)
-                ON CONFLICT (user_id, product_id)
-                DO UPDATE SET quantity = cart_items.quantity + @quantity";
+            var sql = """
+                      INSERT INTO cart_items (user_id, product_id, quantity)
+                      VALUES (@userId, @productId, @quantity)
+                      ON CONFLICT (user_id, product_id)
+                      DO UPDATE SET quantity = cart_items.quantity + @quantity
+                      """;
             await connection.ExecuteAsync(sql, new { userId, productId, quantity });
         }
 

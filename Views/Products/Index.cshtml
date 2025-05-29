@@ -1,68 +1,110 @@
-@using Condorcet.B2.AspnetCore.MVC.Application.Core.Domain
 @model ProductIndexViewModel
 
+@{
+    ViewData["Title"] = "Produits";
+}
+
+<!-- Message d'information -->
+<div class="alert alert-info" role="alert">
+    💡 Cliquez sur un produit pour voir ses détails
+</div>
+
+<!-- Bouton d'ajout admin -->
+@if (User.IsInRole("Admin"))
+{
+    <div class="mb-4 text-end">
+        <a asp-controller="Products" asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus me-1"></i> Ajouter un produit
+        </a>
+    </div>
+}
+
+<!-- Produits -->
 <div class="row">
-    @if (User.IsInRole("Admin"))
-    {
-        <div class="col-md-4 mb-4">
-            <a asp-controller="Products"
-               asp-action="Create"
-               class="text-decoration-none">
-                <div class="card h-100 d-flex align-items-center justify-content-center bg-light border-dashed" style="height: 200px; border: 2px dashed #ccc;"> @*A edit*@
-                    <i class="bi bi-plus" style="font-size: 3rem; color: #888;"></i>
-                    <p class="mt-2 text-center text-muted">Ajouter un produit</p>
-                </div>
-            </a>
-        </div>
-    }
     @foreach (var item in Model.Products)
     {
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">@item.Name</h5>
-                    <p class="card-text text-truncate">@item.Description</p>
-                    <p class="card-text"><strong>Type :</strong> @((ProductType)item.Type)</p>
-                    <p class="card-text"><strong>Prix :</strong> @item.Prix.ToString("C0")</p>
+            <div class="card h-100 shadow-sm rounded border-0"
+                 role="button"
+                 data-bs-toggle="modal"
+                 data-bs-target="#productModal-@item.Id">
+                <div class="card-body d-flex flex-column text-center">
+                    <h5 class="card-title mb-2">@item.Name</h5>
 
-                    @*<form asp-action="AddToCart" method="post">
-                        <input type="hidden" name="productId" value="@item.Id" />
-                        <button type="submit">Ajouter au panier</button>
-                    </form>*@
-
-                    @if (User.IsInRole("Admin") || User.IsInRole("User")) {
-                    <form asp-action="AddToCart" asp-controller="Products" method="post" class="mt-auto ">
-                        <input type="hidden" name="productId" value="@item.Id"/>
-                        <button type="submit" class="mt-auto btn btn-outline-primary" title="Ajouter au panier">
-                            <i class="bi bi-plus"></i> Ajouter au panier
-                        </button>
-                    </form>
-                    }
-
-
-
-                    @* N’affiche le bouton que si l’utilisateur est dans le rôle Admin *@
-                    @if (User.IsInRole("Admin"))
+                    @if (User.IsInRole("Admin") && !item.IsActive)
                     {
-                        <a asp-action="Edit"
-                           asp-route-id="@item.Id"
-                           class="mt-auto btn btn-outline-secondary"
-                           title="Modifier">
-                            <i class="bi bi-pencil"></i> Modifier
-                        </a>
-                        
-                        <form asp-action="Disable"
-                              asp-controller="Products"
-                              asp-route-id="@item.Id"
-                              method="post"
-                              class="mt-2">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-trash"></i> Désactiver
-                            </button>
-                        </form>
+                        <span class="badge bg-danger mb-2">Inactif</span>
                     }
+
+                    <div class="mt-auto border-top pt-2">
+                        <span class="fw-bold text-primary">@item.Prix.ToString("C2")</span>
+                    </div>
                 </div>
             </div>
         </div>
     }
 </div>
+
+<!-- Modals bootstrap pour détails produit -->
+@foreach (var item in Model.Products)
+{
+    <div class="modal fade" id="productModal-@item.Id" tabindex="-1" aria-labelledby="productModalLabel-@item.Id" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalLabel-@item.Id">@item.Name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Description :</strong> @item.Description</p>
+                    <p><strong>Type :</strong> @((ProductType)item.Type)</p>
+                    <p><strong>Prix :</strong> @item.Prix.ToString("C2")</p>
+
+                    @if (User.IsInRole("Admin") && !item.IsActive)
+                    {
+                        <div class="alert alert-warning">
+                            Ce produit n'est plus proposé par nos services.
+                        </div>
+                    }
+
+                    @if (User.IsInRole("Admin") || User.IsInRole("User")) 
+                    {
+                        <form asp-action="AddToCart" asp-controller="Products" method="post" class="mb-3">
+                            <input type="hidden" name="productId" value="@item.Id"/>
+                            <button type="submit" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-plus me-1"></i> Ajouter au panier
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            Connectez-vous pour ajouter le produit à votre panier.
+                        </div>
+                    }
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit"
+                           asp-route-id="@item.Id"
+                           class="btn btn-outline-secondary w-100 mb-2">
+                            <i class="bi bi-pencil me-1"></i> Modifier
+                        </a>
+
+                        if (item.IsActive)
+                        {
+                            <form asp-action="Disable"
+                                  asp-controller="Products"
+                                  asp-route-id="@item.Id"
+                                  method="post">
+                                <button type="submit" class="btn btn-outline-danger w-100">
+                                    <i class="bi bi-trash me-1"></i> Désactiver
+                                </button>
+                            </form>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -7,7 +7,7 @@ Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IProductRepository, DapperProductRepository>();
 builder.Services.AddScoped<IDbConnectionProvider, PGSqlDbConnectionProvider>();
@@ -18,7 +18,7 @@ builder.Services.AddScoped<ICartRepository, DapperCartRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IOrderRepository, DapperOrderRepository>();
 
-// Configuration de l'authentification par cookies
+// // Configuration de l'authentification par cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -38,11 +38,11 @@ builder.Services.AddAuthorization(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    // // The default HSTS value is 30 days. You may want to je crois que ça sert à...
     app.UseHsts();
 }
 

@@ -9,11 +9,12 @@ namespace Condorcet.B2.AspnetCore.MVC.Application.Models;
 public class ProductFormViewModel : IValidatableObject
 {
     public int? Id { get; set; }
+    
     [Required(ErrorMessage = "Le titre est obligatoire")]
     [StringLength(100, ErrorMessage = "Le titre ne peut pas dépasser 100 caractères")]
     public string Name { get; set; }
     
-
+    [Required(ErrorMessage = "Une description est obligatoire. Pensez-vous au bien-être de nos clients ??!!")]
     [StringLength(500, ErrorMessage = "La description ne peut pas dépasser 500 caractères")]
     public string? Description { get; set; }
 
@@ -21,7 +22,7 @@ public class ProductFormViewModel : IValidatableObject
     [Range(1, 2, ErrorMessage = "la priorité doit être entre 1 et 2")]
     public ProductType Type { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Une prix est obligatoire... On ne fait pas de la charité ici.")]
     [Range(0, double.MaxValue, ErrorMessage = "Le budget doit être positif")]
     public decimal Prix { get; set; }
     

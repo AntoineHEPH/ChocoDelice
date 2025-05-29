@@ -10,7 +10,7 @@ public class RegisterUserViewModel
     public string Email { get; set; }
     [Required, StringLength(100, MinimumLength = 3)]
     public string Password { get; set; }
-    [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+    [Compare("Password", ErrorMessage = "Les mots de passe ne correspondent pas.")]
     public string ConfirmPassword { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }

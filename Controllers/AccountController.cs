@@ -3,6 +3,8 @@ using Condorcet.B2.AspnetCore.MVC.Application.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
 
 namespace Condorcet.B2.AspnetCore.MVC.Application.Controllers;
 
@@ -15,7 +17,7 @@ public class AccountController : Controller
         _authService = authService;
     }
 
-    // GET
+    // // GET
     public IActionResult Register()
     {
         return View();
@@ -63,8 +65,8 @@ public class AccountController : Controller
             principal,
             new AuthenticationProperties
             {
-                //IsPersistent = model.RememberMe,
-                //ExpiresUtc = DateTime.UtcNow.AddDays(model.RememberMe ? 14 : 1)
+                // //IsPersistent = model.RememberMe,
+                // //ExpiresUtc = DateTime.UtcNow.AddDays(model.RememberMe ? 14 : 1)
             });
 
         if (Url.IsLocalUrl(returnUrl))
@@ -79,4 +81,10 @@ public class AccountController : Controller
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Index", "Home");
     }
+    
+    public IActionResult AccessDenied()
+    {
+        return View();
+    }
+    
 }

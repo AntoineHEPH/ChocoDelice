@@ -1,7 +1,4 @@
-﻿@using Condorcet.B2.AspnetCore.MVC.Application.Core.Domain
-@using Condorcet.B2.AspnetCore.MVC.Application.Models
-@model List<CommandeViewModel>
-
+﻿@model List<CommandeViewModel>
 @{
     ViewData["Title"] = "Historique des commandes";
 }
@@ -21,7 +18,7 @@
         {
             <div class="card mb-4 shadow-sm">
                 <div class="card-header bg-dark text-white">
-                    <strong>Client :</strong> @commande.Username &nbsp; | &nbsp;
+                    <strong>Client :</strong> @commande.Username &nbsp; | &nbsp; <!-- Espace insécable -->
                     <strong>Date :</strong> @commande.OrderDate.ToString("g")
                 </div>
                 <div class="card-body">

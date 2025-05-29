@@ -1,5 +1,5 @@
-namespace Condorcet.B2.AspnetCore.MVC.Application.Models;
 using Condorcet.B2.AspnetCore.MVC.Application.Core.Domain;
+namespace Condorcet.B2.AspnetCore.MVC.Application.Models;
 
 public class CartIndexViewModel
 {

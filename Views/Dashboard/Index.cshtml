@@ -3,60 +3,114 @@
 @{
     ViewData["Title"] = "Dashboard";
 }
+<!-- BOOTSTRAP FAIT PAR CHATGPT -->
+<div class="bg-light min-vh-100 py-4">
+    <div class="container">
+        <h1 class="text-center mb-5 fw-bold text-primary">
+            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+        </h1>
 
-<h1 class="mb-4">Dashboard</h1>
+        <!-- Cartes statistiques -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 p-3">
+                            <i class="bi bi-people-fill text-primary fs-1"></i>
+                        </div>
+                        <h5 class="card-title text-muted mb-2">Utilisateurs inscrits</h5>
+                        <p class="card-text display-4 fw-bold text-primary">@Model.UserCount</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 p-3">
+                            <i class="bi bi-box-seam-fill text-success fs-1"></i>
+                        </div>
+                        <h5 class="card-title text-muted mb-2">Produits disponibles</h5>
+                        <p class="card-text display-4 fw-bold text-success">@Model.ProductCount</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 p-3">
+                            <i class="bi bi-cart-check-fill text-warning fs-1"></i>
+                        </div>
+                        <h5 class="card-title text-muted mb-2">Commandes effectuées</h5>
+                        <p class="card-text display-4 fw-bold text-warning">@Model.OrderCount</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<div class="row">
-    <div class="col-md-4 mb-4">
-        <div class="card text-center h-100">
-            <div class="card-body">
-                <h5 class="card-title">Utilisateurs inscrits</h5>
-                <p class="card-text display-4">@Model.UserCount</p>
+        <!-- Sections des listes -->
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-primary text-white border-0 py-3">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-person-plus-fill me-2"></i>
+                            Dernières inscriptions
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            @foreach(var user in Model.RecentUsers)
+                            {
+                                <div class="list-group-item border-0 py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3 p-2">
+                                            <i class="bi bi-person-fill text-primary"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1 fw-semibold">@user.Username</h6>
+                                            <small class="text-muted">
+                                                <i class="bi bi-calendar3 me-1"></i>
+                                                @user.CreatedAt.ToString("g")
+                                            </small>
+                                        </div>
+                                        <span class="badge bg-primary rounded-pill">Nouveau</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-4">
-        <div class="card text-center h-100">
-            <div class="card-body">
-                <h5 class="card-title">Produits disponibles</h5>
-                <p class="card-text display-4">@Model.ProductCount</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-4">
-        <div class="card text-center h-100">
-            <div class="card-body">
-                <h5 class="card-title">Commande(s) simulée(s)</h5>
-                <p class="card-text display-4">@Model.OrderCount</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-6 mb-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <h5 class="card-title">Derniers utilisateurs</h5>
-                <ul class="list-group list-group-flush">
-                    @foreach(var user in Model.RecentUsers)
-                    {
-                        <li class="list-group-item">@user.Username (@user.CreatedAt.ToString("g"))</li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 mb-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <h5 class="card-title">Derniers produits ajoutés</h5>
-                <ul class="list-group list-group-flush">
-                    @foreach(var prod in Model.RecentProducts)
-                    {
-                        <li class="list-group-item">@prod.Name (@prod.CreatedAt.ToString("g"))</li>
-                    }
-                </ul>
+            
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-success text-white border-0 py-3">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-plus-circle-fill me-2"></i>
+                            Derniers produits ajoutés
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            @foreach(var prod in Model.RecentProducts)
+                            {
+                                <div class="list-group-item border-0 py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3 p-2">
+                                            <i class="bi bi-box text-success"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1 fw-semibold">@prod.Name</h6>
+                                        </div>
+                                        <span class="badge bg-success rounded-pill">Récent</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

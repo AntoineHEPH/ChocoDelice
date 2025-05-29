@@ -3,7 +3,6 @@ using Condorcet.B2.AspnetCore.MVC.Application.Core.Repository;
 using Condorcet.B2.AspnetCore.MVC.Application.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace Condorcet.B2.AspnetCore.MVC.Application.Controllers
 {
@@ -30,25 +29,28 @@ namespace Condorcet.B2.AspnetCore.MVC.Application.Controllers
             return _userRepository.GetByUsernameAsync(username);
         }
         
-
-        // GET: ProjectsController
+        
         public async Task<ActionResult> Index()
         {
             var products = await _productRepository.GetAll();
+            
+            if (!User.IsInRole("Admin"))
+                products = products.Where(p => p.IsActive).ToList();
+            
             return View(new ProductIndexViewModel()
             {
                 Products = products
             });
         }
-
-        [Authorize(Policy = "CreateProductPolicy")]
+        
+        [Authorize(Policy = "AdminUserAccess")]
         public IActionResult Create()
         {
             return View();
         }
         
         [HttpPost]
-        [Authorize(Policy = "CreateProductPolicy")]
+        [Authorize(Policy = "AdminUserAccess")]
         public async Task<IActionResult> Create(ProductFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -98,6 +100,7 @@ namespace Condorcet.B2.AspnetCore.MVC.Application.Controllers
             return RedirectToAction(nameof(Index));
         }
         
+        [HttpPost]
         [Authorize(Policy = "AdminUserAccess")]
         public async Task<IActionResult> AddToCart(int productId)
         {
@@ -108,9 +111,6 @@ namespace Condorcet.B2.AspnetCore.MVC.Application.Controllers
             await _cartRepository.Add(user.Id, productId, 1);
             return RedirectToAction(nameof(Index));
         }
-
-        
-        
         
         public async Task<IActionResult> Cart()
         {
@@ -124,8 +124,8 @@ namespace Condorcet.B2.AspnetCore.MVC.Application.Controllers
             return View(user.Cart.ProductsList);
         }
         
-        [Authorize(Roles = "Admin")]
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Disable(int id)
         {
             var rowsAffected = await _productRepository.DisableAsync(id);
@@ -135,15 +135,5 @@ namespace Condorcet.B2.AspnetCore.MVC.Application.Controllers
             }
             return NotFound();
         }
-
-
-        
-        
-
-
-
-        
-        
-
     }
 }

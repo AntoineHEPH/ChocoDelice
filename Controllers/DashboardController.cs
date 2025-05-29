@@ -1,7 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Condorcet.B2.AspnetCore.MVC.Application.Core.Domain;
 using Condorcet.B2.AspnetCore.MVC.Application.Core.Repository;
 using Condorcet.B2.AspnetCore.MVC.Application.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -14,26 +10,33 @@ namespace Condorcet.B2.AspnetCore.MVC.Application.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IOrderRepository _orderRepository;
 
         public DashboardController(IUserRepository userRepository,
-                                   IProductRepository productRepository)
+                                   IProductRepository productRepository,
+                                   IOrderRepository orderRepository)
         {
             _userRepository = userRepository;
             _productRepository = productRepository;
+            _orderRepository = orderRepository;
         }
 
         public async Task<IActionResult> Index()
         {
-            // Récupérer tous les utilisateurs et produits
             var users = await _userRepository.GetAll();
             var products = await _productRepository.GetAll();
-
-            // Construire le ViewModel
+            var orders = await _orderRepository.GetAllOrdersAsync();
+            
             var model = new DashboardViewModel
             {
                 UserCount = users.Count(),
                 ProductCount = products.Count(),
-                OrderCount = 0, // TODO: remplacer par le nombre réel de commandes
+                OrderCount = orders
+                    .GroupBy(o => new { 
+                        o.UserId, 
+                        OrderDate = o.OrderDate.ToString("yyyy-MM-dd HH:mm") 
+                    })
+                    .Count(),
                 RecentUsers = users
                     .OrderByDescending(u => u.CreatedAt)
                     .Take(5)
@@ -46,8 +49,7 @@ namespace Condorcet.B2.AspnetCore.MVC.Application.Controllers
                     .Take(5)
                     .Select(p => new RecentProductDto
                     {
-                        Name = p.Name,
-                        CreatedAt = DateTime.Now // TODO: remplacer par la date de création réelle du produit
+                        Name = p.Name
                     })
             };
 

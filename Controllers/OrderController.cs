@@ -1,7 +1,7 @@
 ﻿using Condorcet.B2.AspnetCore.MVC.Application.Core.Domain;
-using Condorcet.B2.AspnetCore.MVC.Application.Core.Infrastructure;
 using Condorcet.B2.AspnetCore.MVC.Application.Core.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Condorcet.B2.AspnetCore.MVC.Application.Controllers
 {
@@ -26,22 +26,18 @@ namespace Condorcet.B2.AspnetCore.MVC.Application.Controllers
 
             return await _userRepository.GetByUsernameAsync(username);
         }
-
-        // 🔁 Création de la commande (depuis le panier)
+        
         [HttpPost]
+        [Authorize(Policy = "AdminUserAccess")]
         public async Task<IActionResult> Create()
         {
-            Console.WriteLine("🟢 [DEBUG] OrderController.Create() APPELÉ");
-
             var user = await GetCurrentUser();
             if (user == null)
             {
-                Console.WriteLine("🔴 [DEBUG] Utilisateur non connecté");
                 return RedirectToAction("Login", "Account");
             }
 
             var cartItems = await _cartRepository.GetAll(user.Id);
-            Console.WriteLine($"🟡 [DEBUG] {cartItems.Count} articles dans le panier");
 
             if (!cartItems.Any())
             {
@@ -62,21 +58,16 @@ namespace Condorcet.B2.AspnetCore.MVC.Application.Controllers
                     OrderDate = DateTime.Now
                 };
 
-                Console.WriteLine($"📦 Enregistrement commande pour produit : {item.Product.Name}");
-
                 await _orderRepository.AddAsync(order);
             }
 
             await _cartRepository.Clear(user.Id);
-            Console.WriteLine("🧹 Panier vidé");
-            Console.WriteLine($"🧾 Commande ajoutée pour : {user.Username}");
 
             TempData["Success"] = "Votre commande a été enregistrée avec succès ! 🎉";
             return RedirectToAction("Index", "Cart");
         }
-
-
-        // 📄 Historique de l'utilisateur
+        
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> Index()
         {
             var user = await GetCurrentUser();
@@ -86,8 +77,8 @@ namespace Condorcet.B2.AspnetCore.MVC.Application.Controllers
             var orders = await _orderRepository.GetOrdersByUserAsync(user.Id);
             return View(orders);
         }
-
-        // 🔍 Historique complet (admin)
+        
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> All()
         {
             var orders = await _orderRepository.GetAllOrdersAsync();
@@ -109,8 +100,5 @@ namespace Condorcet.B2.AspnetCore.MVC.Application.Controllers
 
             return View(commandes);
         }
-
-
-
     }
 }

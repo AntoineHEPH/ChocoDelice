@@ -30,7 +30,7 @@
                     <th>Produit</th>
                     <th>Prix unitaire</th>
                     <th>Quantité</th>
-                    <th>Total</th>
+                    <th>Prix</th>
                     <th class="text-center">Actions</th>
                 </tr>
             </thead>
@@ -50,7 +50,7 @@
                                 </button>
                             </form>
                         </td>
-                        <td class="align-middle">@qtxPrix.ToString("C0") €</td>
+                        <td class="align-middle">@qtxPrix.ToString("C0")</td>
                         <td class="align-middle text-center">
                             <form asp-action="Remove" method="post">
                                 <input type="hidden" name="productId" value="@item.Product.Id" />
@@ -65,7 +65,7 @@
             <tfoot>
                 <tr>
                     <td colspan="3" class="text-end"><strong>Total :</strong></td>
-                    <td colspan="2" class="text-start"><strong>@total.ToString("C0") €</strong></td>
+                    <td colspan="2" class="text-start"><strong>@total.ToString("C0")</strong></td>
                 </tr>
             </tfoot>
         </table>
@@ -73,7 +73,7 @@
         
        <form asp-controller="Order" asp-action="Create" method="post">
     <button type="submit" class="btn btn-success">
-        <i class="bi bi-check2-circle"></i> Valider la commandeeeeeeeee
+        <i class="bi bi-check2-circle"></i> Valider la commande
     </button>
 </form>
 

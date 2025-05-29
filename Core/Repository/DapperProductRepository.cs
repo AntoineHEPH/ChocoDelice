@@ -16,76 +16,74 @@ namespace Condorcet.B2.AspnetCore.MVC.Application.Core.Repository
         public async Task<List<Product>> GetAll()
         {
             using var connection = await _dbConnectionProvider.CreateConnection();
-            var result =
-                await connection.QueryAsync<Product>(
-                    "SELECT id, name, description, type, prix, isactive FROM products WHERE isactive = true ORDER BY id");
+            var sql = """
+                      SELECT id, name, description, type, prix, isactive 
+                      FROM products
+                      ORDER BY id
+                      """;
+            var result = await connection.QueryAsync<Product>(sql);
             return result.ToList();
         }
 
         public async Task<Product?> GetById(int id)
         {
             using var connection = await _dbConnectionProvider.CreateConnection();
-            return await connection.QueryFirstOrDefaultAsync<Product>(
-                "SELECT id, name, description, type, prix FROM products WHERE id = @id",
-                new { id });
+            var sql = """
+                      SELECT id, name, description, type, prix 
+                      FROM products 
+                      WHERE id = @id
+                      """;
+            return await connection.QueryFirstOrDefaultAsync<Product>(sql, new { id });
         }
 
         public async Task<int> Insert(Product product)
         {
             using var connection = await _dbConnectionProvider.CreateConnection();
-            const string sql = """
-                               INSERT INTO products 
-                               (
-                                   name, 
-                                   description, 
-                                   type, 
-                                   prix
-                               )
-                               VALUES 
-                               (
-                                   @Name, 
-                                   @Description, 
-                                   @Type, 
-                                   @Prix
-                               )
-                               RETURNING id
-                               """;
-            var id = await connection.ExecuteScalarAsync<int>(sql, product);
-
-            return id;
+            var sql = """
+                      INSERT INTO products 
+                      (
+                          name, 
+                          description, 
+                          type, 
+                          prix
+                      )
+                      VALUES 
+                      (
+                          @Name, 
+                          @Description, 
+                          @Type, 
+                          @Prix
+                      )
+                      RETURNING id
+                      """;
+            return await connection.ExecuteScalarAsync<int>(sql, product);
         }
 
         public async Task<int> Update(int id, Product product)
         {
             product.Id = id;
             using var connection = await _dbConnectionProvider.CreateConnection();
-            return await connection.ExecuteAsync("""
-                                                 UPDATE products 
-                                                 SET 
-                                                     name = @name, 
-                                                     description = @description,
-                                                     type = @type,
-                                                     prix = @prix
-                                                 WHERE id = @id;
-                                                 """, product);
-        }
-
-        public async Task<bool> Exists(string? name)
-        {
-            using var connection = await _dbConnectionProvider.CreateConnection();
-            return await connection.ExecuteScalarAsync<bool>("""
-                                                             SELECT EXISTS (SELECT 1 FROM products WHERE name = @name)
-                                                             """, new {name});
+            var sql = """
+                      UPDATE products 
+                      SET 
+                          name = @name, 
+                          description = @description,
+                          type = @type,
+                          prix = @prix
+                      WHERE id = @id
+                      """;
+            return await connection.ExecuteAsync(sql, product);
         }
 
         public async Task<int> DisableAsync(int id)
         {
             using var connection = await _dbConnectionProvider.CreateConnection();
-            return await connection.ExecuteAsync("""
-                                                 UPDATE Products
-                                                 SET IsActive = FALSE
-                                                 WHERE id = @id;
-                                                 """, new { Id = id });
+            var sql = """
+                      UPDATE products
+                      SET isactive = FALSE
+                      WHERE id = @id
+                      """;
+            return await connection.ExecuteAsync(sql, new { id });
         }
     }
 }
